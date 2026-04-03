@@ -9,6 +9,18 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TelemetryMessageTest {
     @Test
+    void should_encode_and_then_decode() {
+        byte[] bytes = TelemetryEncoder.encode(new TelemetryMessage(1L, 1, 1L, 50.0));
+
+        TelemetryMessage decoded = TelemetryDecoder.decode(bytes);
+
+        assertEquals(1L, decoded.deviceId());
+        assertEquals(1, decoded.metricId());
+        assertEquals(1L, decoded.timestamp());
+        assertEquals(50.0, decoded.value());
+    }
+
+    @Test
     void should_decode_message_when_all_validations_pass() {
         byte[] bytes = frame(1L, 1, 1L, 50.0, 0);
 
