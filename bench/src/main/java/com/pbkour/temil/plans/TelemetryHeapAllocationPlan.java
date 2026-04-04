@@ -1,11 +1,8 @@
 package com.pbkour.temil.plans;
 
-import com.pbkour.temil.TelemetryEncoder;
-import com.pbkour.temil.TelemetryMessage;
+import com.pbkour.temil.telemetry.TelemetryEncoder;
+import com.pbkour.temil.telemetry.TelemetryMessage;
 import org.openjdk.jmh.annotations.*;
-
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 
 @State(Scope.Benchmark)
 public class TelemetryHeapAllocationPlan {
