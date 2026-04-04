@@ -13,8 +13,9 @@ public class AggregateStore {
         if (message == null) throw new AggregateStoreException("message is null");
 
         MetricKey metricKey = new MetricKey(message);
-        if (map.containsKey(metricKey)) {
-            map.get(metricKey).update(message);
+        Aggregate aggregate = map.get(metricKey);
+        if (aggregate != null) {
+            aggregate.update(message);
         } else {
             map.put(metricKey, new Aggregate(message));
         }
