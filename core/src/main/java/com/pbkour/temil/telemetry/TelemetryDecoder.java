@@ -1,4 +1,4 @@
-package com.pbkour.temil;
+package com.pbkour.temil.telemetry;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
