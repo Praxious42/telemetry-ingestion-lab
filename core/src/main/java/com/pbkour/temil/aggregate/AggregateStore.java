@@ -9,7 +9,7 @@ public class AggregateStore {
     private final HashMap<MetricKey, Aggregate> map = new HashMap<>();
 
 
-    void upsert(TelemetryMessage message) {
+    public void upsert(TelemetryMessage message) {
         if (message == null) throw new AggregateStoreException("message is null");
 
         MetricKey metricKey = new MetricKey(message);
