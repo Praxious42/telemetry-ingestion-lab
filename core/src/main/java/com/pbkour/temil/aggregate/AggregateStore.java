@@ -4,6 +4,7 @@ import com.pbkour.temil.telemetry.TelemetryMessage;
 import lombok.experimental.StandardException;
 
 import java.util.HashMap;
+import java.util.Optional;
 
 public class AggregateStore {
     private final HashMap<MetricKey, Aggregate> map = new HashMap<>();
@@ -21,12 +22,12 @@ public class AggregateStore {
         }
     }
 
-    public Aggregate getAggregate(MetricKey metricKey) {
+    public Optional<Aggregate> getAggregate(MetricKey metricKey) {
         if (metricKey == null) {
             throw new AggregateStoreException("Metric key is null");
         }
 
-        return map.get(metricKey);
+        return Optional.ofNullable(map.get(metricKey));
     }
 
     @StandardException

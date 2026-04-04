@@ -14,7 +14,7 @@ class AggregateStoreTest {
 
         aggregateStore.upsert(telemetryMessage);
 
-        Aggregate aggregate = aggregateStore.getAggregate(new MetricKey(10L, 10));
+        Aggregate aggregate = aggregateStore.getAggregate(new MetricKey(10L, 10)).orElseThrow(RuntimeException::new);
 
         assertEquals(telemetryMessage.value(), aggregate.getLastValue());
         assertEquals(telemetryMessage.value(), aggregate.getMin());
@@ -36,7 +36,7 @@ class AggregateStoreTest {
 
         aggregateStore.upsert(telemetryMessage2);
 
-        Aggregate aggregate = aggregateStore.getAggregate(new MetricKey(telemetryMessage));
+        Aggregate aggregate = aggregateStore.getAggregate(new MetricKey(telemetryMessage)).orElseThrow(RuntimeException::new);
 
         assertEquals(telemetryMessage2.value(), aggregate.getLastValue());
         assertEquals(telemetryMessage.value(), aggregate.getMin());
@@ -57,7 +57,7 @@ class AggregateStoreTest {
 
         aggregateStore.upsert(telemetryMessage2);
 
-        Aggregate aggregate = aggregateStore.getAggregate(new MetricKey(telemetryMessage));
+        Aggregate aggregate = aggregateStore.getAggregate(new MetricKey(telemetryMessage)).orElseThrow(RuntimeException::new);
 
         assertEquals(telemetryMessage.value(), aggregate.getLastValue());
         assertEquals(telemetryMessage.value(), aggregate.getMin());
