@@ -34,18 +34,18 @@ public class MessageSimulator {
 
     private static List<LoadProfile> createLoadProfiles() {
         return List.of(
-                new LoadProfile(5000000, 1, true, TrafficPattern.SLOW),
-                new LoadProfile(5000000, 10, true, TrafficPattern.SLOW),
-                new LoadProfile(5000000, 100, true, TrafficPattern.SLOW),
-                new LoadProfile(5000000, 1000, true, TrafficPattern.SLOW),
-                new LoadProfile(5000000, 1, true, TrafficPattern.STEADY),
-                new LoadProfile(5000000, 10, true, TrafficPattern.STEADY),
-                new LoadProfile(5000000, 100, true, TrafficPattern.STEADY),
-                new LoadProfile(5000000, 1000, true, TrafficPattern.STEADY),
-                new LoadProfile(5000000, 1, true, TrafficPattern.BURSTY),
-                new LoadProfile(5000000, 10, true, TrafficPattern.BURSTY),
-                new LoadProfile(5000000, 100, true, TrafficPattern.BURSTY),
-                new LoadProfile(5000000, 1000, true, TrafficPattern.BURSTY)
+                new LoadProfile(5000000, 1, TrafficPattern.SLOW),
+                new LoadProfile(5000000, 10, TrafficPattern.SLOW),
+                new LoadProfile(5000000, 100, TrafficPattern.SLOW),
+                new LoadProfile(5000000, 1000, TrafficPattern.SLOW),
+                new LoadProfile(5000000, 1, TrafficPattern.STEADY),
+                new LoadProfile(5000000, 10, TrafficPattern.STEADY),
+                new LoadProfile(5000000, 100, TrafficPattern.STEADY),
+                new LoadProfile(5000000, 1000, TrafficPattern.STEADY),
+                new LoadProfile(5000000, 1, TrafficPattern.BURSTY),
+                new LoadProfile(5000000, 10, TrafficPattern.BURSTY),
+                new LoadProfile(5000000, 100, TrafficPattern.BURSTY),
+                new LoadProfile(5000000, 1000, TrafficPattern.BURSTY)
         );
     }
 

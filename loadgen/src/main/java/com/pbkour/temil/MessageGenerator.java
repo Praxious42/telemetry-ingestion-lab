@@ -3,7 +3,6 @@ package com.pbkour.temil;
 import com.pbkour.temil.telemetry.TelemetryMessage;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
