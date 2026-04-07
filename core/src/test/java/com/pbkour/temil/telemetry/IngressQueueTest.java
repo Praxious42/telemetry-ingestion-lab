@@ -16,7 +16,7 @@ class IngressQueueTest {
         final int CONSUMERS = 4;
         final int MESSAGES_PER_PRODUCER = 500;
 
-        IngressQueue ingress = new IngressQueue();
+        IngressQueue ingress = new IngressQueue(64);
 
         ExecutorService consumerPool = Executors.newFixedThreadPool(CONSUMERS);
         ExecutorService producerPool = Executors.newFixedThreadPool(PRODUCERS);
@@ -49,7 +49,6 @@ class IngressQueueTest {
                             break;
                         }
 
-                        System.out.println(Thread.currentThread().getName() + " got: " + msg);
                         consumedCount.incrementAndGet();
                     }
                 } catch (InterruptedException e) {

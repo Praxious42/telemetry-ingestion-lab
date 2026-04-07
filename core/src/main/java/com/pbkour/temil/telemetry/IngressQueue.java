@@ -8,8 +8,16 @@ import java.util.Objects;
 import java.util.concurrent.ArrayBlockingQueue;
 
 public class IngressQueue {
-    private static final int CAPACITY = 64;
-    private final ArrayBlockingQueue<TelemetryMessage> queue = new ArrayBlockingQueue<>(CAPACITY);
+    private final int capacity;
+    private final ArrayBlockingQueue<TelemetryMessage> queue;
+
+    public IngressQueue(int capacity) {
+        if (capacity < 1) {
+            throw new IngressQueueException("trying to instantiate with non-positive capacity");
+        }
+        this.capacity = capacity;
+        this.queue = new ArrayBlockingQueue<>(capacity);
+    }
 
     public void enqueue(TelemetryMessage message) throws InterruptedException {
         if (message == null) {
@@ -19,6 +27,9 @@ public class IngressQueue {
     }
 
     public void enqueue(List<TelemetryMessage> messages) throws InterruptedException {
+        if (messages == null) {
+            throw new IngressQueueException("message list is null");
+        }
         if (messages.stream().anyMatch(Objects::isNull)) {
             throw new IngressQueueException("found a message that is null");
         }
