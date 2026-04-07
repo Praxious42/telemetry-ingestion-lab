@@ -8,14 +8,12 @@ import java.util.Objects;
 import java.util.concurrent.ArrayBlockingQueue;
 
 public class IngressQueue {
-    private final int capacity;
     private final ArrayBlockingQueue<TelemetryMessage> queue;
 
     public IngressQueue(int capacity) {
         if (capacity < 1) {
             throw new IngressQueueException("trying to instantiate with non-positive capacity");
         }
-        this.capacity = capacity;
         this.queue = new ArrayBlockingQueue<>(capacity);
     }
 
