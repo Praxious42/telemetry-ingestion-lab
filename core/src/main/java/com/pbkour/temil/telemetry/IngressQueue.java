@@ -10,7 +10,7 @@ public class IngressQueue {
     private static final int CAPACITY = 64;
     private final ArrayBlockingQueue<TelemetryMessage> queue = new ArrayBlockingQueue<>(CAPACITY);
 
-    public void  enqueue(TelemetryMessage message) throws InterruptedException {
+    public void enqueue(TelemetryMessage message) throws InterruptedException {
         queue.put(message);
     }
 
