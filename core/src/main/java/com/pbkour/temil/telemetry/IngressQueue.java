@@ -4,6 +4,7 @@ import lombok.experimental.StandardException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ArrayBlockingQueue;
 
 public class IngressQueue {
@@ -11,10 +12,17 @@ public class IngressQueue {
     private final ArrayBlockingQueue<TelemetryMessage> queue = new ArrayBlockingQueue<>(CAPACITY);
 
     public void enqueue(TelemetryMessage message) throws InterruptedException {
+        if (message == null) {
+            throw new IngressQueueException("message is null");
+        }
         queue.put(message);
     }
 
     public void enqueue(List<TelemetryMessage> messages) throws InterruptedException {
+        if (messages.stream().anyMatch(Objects::isNull)) {
+            throw new IngressQueueException("found a message that is null");
+        }
+
         for (TelemetryMessage message : messages) {
             queue.put(message);
         }
@@ -25,6 +33,10 @@ public class IngressQueue {
     }
 
     public List<TelemetryMessage> dequeue(int numberOfMessages) throws InterruptedException {
+        if (numberOfMessages <= 0) {
+            throw new IngressQueueException("number of messages to dequeue are less or equal to zero");
+
+        }
         List<TelemetryMessage> messages = new ArrayList<>();
 
         for (int i = 0; i < numberOfMessages; i++) {
