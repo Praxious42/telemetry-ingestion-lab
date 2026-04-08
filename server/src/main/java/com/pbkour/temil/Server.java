@@ -19,8 +19,8 @@ public class Server {
         if (queue == null) {
             throw new ServerException("queue is null");
         }
-        if (port <= 0) {
-            throw new ServerException("invalid port");
+        if (port <= 0 || port > 65535) {
+            throw new ServerException("invalid port " + port + ". Expected 0-65535");
         }
 
         this.queue = queue;
@@ -35,7 +35,7 @@ public class Server {
                         this.queue.put(telemetryMessage);
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
-                        throw new RuntimeException(e);
+                        throw new ServerException(e);
                     }
                 } catch (Exception e) {
                     throw new ServerException(e);
