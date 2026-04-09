@@ -3,6 +3,10 @@ package com.pbkour.temil;
 import com.pbkour.temil.telemetry.TelemetryMessage;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -14,7 +18,7 @@ class ServerClientIntegrationTest {
     @Test
     void serverReceivesTelemetryMessageFromClient() throws Exception {
         int port = 6000;
-        BlockingQueue<TelemetryMessage> queue = new LinkedBlockingQueue<>(1);
+        BlockingQueue<TelemetryMessage> queue = new LinkedBlockingQueue<>(100000);
 
         Thread serverThread = new Thread(() -> new Server(queue, port));
         serverThread.setDaemon(true);
@@ -22,12 +26,21 @@ class ServerClientIntegrationTest {
 
         Thread.sleep(200);
 
-        Thread clientThread = new Thread(() -> new Client("localhost", port));
-        clientThread.start();
+        List<TelemetryMessage> messages = new ArrayList<>();
+        for (int i = 0; i < 100_000; i++) {
+            messages.add(new TelemetryMessage(i+1, 1, 1, 1));
+        }
 
-        TelemetryMessage received = queue.poll(2, TimeUnit.SECONDS);
-        assertNotNull(received, "Server did not receive a TelemetryMessage within timeout");
-        assertEquals(new TelemetryMessage(1, 1, 1, 1), received);
+        long start = Instant.now().toEpochMilli();
+        System.out.println(start);
+        Instant end;
+
+        Client client = new Client("localhost", port);
+        client.sendAll(messages);
+
+        Thread.sleep(5000);
+        System.out.println(queue.size());
+        assertEquals(100_000, queue.size());
     }
 }
 

@@ -10,11 +10,10 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.time.Instant;
 import java.util.concurrent.BlockingQueue;
 
 public class Server {
-    private final BlockingQueue<TelemetryMessage> queue;
-
     public Server(BlockingQueue<TelemetryMessage> queue, int port) {
         if (queue == null) {
             throw new ServerException("queue is null");
@@ -23,26 +22,29 @@ public class Server {
             throw new ServerException("invalid port " + port + ". Expected 0-65535");
         }
 
-        this.queue = queue;
         try (ServerSocketChannel channel = ServerSocketChannel.open()) {
             channel.bind(new InetSocketAddress(port));
             while (true) {
-                try (SocketChannel client = channel.accept()) {
-
-                    TelemetryMessage telemetryMessage = receiveObject(client);
-
-                    try {
-                        this.queue.put(telemetryMessage);
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                        throw new ServerException(e);
-                    }
-                } catch (Exception e) {
-                    throw new ServerException(e);
-                }
+                readMessagesFromChannel(queue, channel);
             }
         } catch (IOException e) {
             throw new ServerException(e);
+        }
+    }
+
+    private void readMessagesFromChannel(BlockingQueue<TelemetryMessage> queue, ServerSocketChannel channel) {
+        try (SocketChannel client = channel.accept()) {
+            while (true) {
+                TelemetryMessage telemetryMessage = receiveObject(client);
+                try {
+                    queue.put(telemetryMessage);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw new ServerException(e);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
