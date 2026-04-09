@@ -90,3 +90,10 @@ p95   = 71999 us
 p99   = 156927 us
 max   = 156927 us
 mean  = 66393.6 us
+
+09/04/2026
+Client-side blocking baseline:
+100,000 fixed 32-byte frames sent over one TCP connection to a pre-started blocking server.
+Client completed writes in 1,218 ms.
+Approximate client-side throughput: 82,102 frames/sec (~2.63 MB/s raw payload).
+This measures send completion, not guaranteed full server-side processing completion.

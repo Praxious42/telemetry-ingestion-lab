@@ -4,30 +4,59 @@ import com.pbkour.temil.telemetry.TelemetryEncoder;
 import com.pbkour.temil.telemetry.TelemetryMessage;
 import lombok.experimental.StandardException;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
+import java.time.Instant;
+import java.util.List;
 
 public class Client {
+
+    private final String host;
+    private final int port;
+
     public Client(String host, int port) {
+        if (host == null || host.isBlank()) {
+            throw new ClientException("empty or null host");
+        }
+
+        if (port <= 0 || port > 65535) {
+            throw new ClientException("invalid port " + port + ". Expected 0-65535");
+        }
+
+        this.host = host;
+        this.port = port;
+    }
+
+    public void sendAll(List<TelemetryMessage> messages) throws IOException {
         try (SocketChannel socketChannel = SocketChannel.open()) {
             socketChannel.connect(new InetSocketAddress(host, port));
 
-            sendObject(socketChannel, new TelemetryMessage(1, 1, 1, 1));
-        } catch (IOException e) {
-            throw new ClientException(e);
+            for (TelemetryMessage msg : messages) {
+                byte[] bytes = TelemetryEncoder.encode(msg);
+                ByteBuffer buf = ByteBuffer.wrap(bytes);
+                while (buf.hasRemaining()) {
+                    socketChannel.write(buf);
+                }
+            }
+            System.out.println(Instant.now().toEpochMilli());
         }
     }
 
-    void sendObject(SocketChannel channel, TelemetryMessage obj) throws IOException {
-        byte[] bytes = TelemetryEncoder.encode(obj);
+    public void sendAll(List<TelemetryMessage> messages, Instant finishTime) throws IOException {
+        try (SocketChannel socketChannel = SocketChannel.open()) {
+            socketChannel.connect(new InetSocketAddress(host, port));
 
-        ByteBuffer dataBuffer = ByteBuffer.wrap(bytes);
-        while (dataBuffer.hasRemaining()) {
-            channel.write(dataBuffer);
+            for (TelemetryMessage msg : messages) {
+                byte[] bytes = TelemetryEncoder.encode(msg);
+                ByteBuffer buf = ByteBuffer.wrap(bytes);
+                while (buf.hasRemaining()) {
+                    socketChannel.write(buf);
+                }
+            }
         }
+        System.out.println(Instant.now().toEpochMilli());
     }
 
     @StandardException
