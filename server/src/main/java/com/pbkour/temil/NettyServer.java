@@ -1,5 +1,6 @@
 package com.pbkour.temil;
 
+import com.pbkour.temil.aggregate.AggregateStore;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -11,9 +12,11 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 
 public class NettyServer {
     private final int port;
+    private final AggregateStore aggregateStore;
 
-    public NettyServer(int port) {
+    public NettyServer(int port, AggregateStore aggregateStore) {
         this.port = port;
+        this.aggregateStore = aggregateStore;
     }
 
     public void run() throws Exception {
@@ -26,7 +29,7 @@ public class NettyServer {
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         public void initChannel(SocketChannel ch) throws Exception {
-                            ch.pipeline().addLast(new TelemetryMessageHandler());
+                            ch.pipeline().addLast(new TelemetryMessageHandler(aggregateStore));
                         }
                     })
                     .option(ChannelOption.SO_BACKLOG, 128)
@@ -51,6 +54,6 @@ public class NettyServer {
             port = Integer.parseInt(args[0]);
         }
 
-        new NettyServer(port).run();
+        new NettyServer(port, new AggregateStore()).run();
     }
 }

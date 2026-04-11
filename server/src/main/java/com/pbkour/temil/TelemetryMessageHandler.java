@@ -1,25 +1,31 @@
 package com.pbkour.temil;
 
+import com.pbkour.temil.aggregate.AggregateStore;
 import com.pbkour.temil.telemetry.TelemetryDecoder;
 import com.pbkour.temil.telemetry.TelemetryMessage;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelFutureListener;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class TelemetryMessageHandler extends ChannelInboundHandlerAdapter {
+    private final AggregateStore aggregateStore;
+
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        // Common Netty inbound message types are ByteBuf (raw bytes) or already-decoded byte[]
-        if (msg instanceof ByteBuf) {
-            ByteBuf buf = (ByteBuf) msg;
+        if (msg instanceof ByteBuf buf) {
             try {
                 byte[] bytes = new byte[buf.readableBytes()];
-                // readBytes advances readerIndex; we copy bytes into a new array
                 buf.readBytes(bytes);
-                System.out.println(bytes.length);
+                TelemetryMessage telemetryMessage = TelemetryDecoder.decode(bytes);
+                aggregateStore.upsert(telemetryMessage);
 
-                ctx.fireChannelRead(bytes.length);
+                ctx.writeAndFlush(Unpooled.buffer(4).writeInt(200))
+                        .addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
             } finally {
                 ReferenceCountUtil.release(buf);
             }

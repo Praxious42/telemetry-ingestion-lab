@@ -30,6 +30,10 @@ public class AggregateStore {
         return Optional.ofNullable(map.get(metricKey));
     }
 
+    public int getSize() {
+        return map.size();
+    }
+
     @StandardException
     public static class AggregateStoreException extends RuntimeException {
     }

@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
-import java.time.Instant;
 import java.util.List;
 
 public class Client {
@@ -39,30 +38,25 @@ public class Client {
                 while (buf.hasRemaining()) {
                     socketChannel.write(buf);
                 }
-                ByteBuffer readBuf = ByteBuffer.allocate(4);
-                while (readBuf.hasRemaining()) {
-                    int n = socketChannel.read(readBuf);
-                    if (n == -1) {
-                        readBuf.flip();
-                        int response = readBuf.getInt();
-                        System.out.println(response);
-                        continue;
-                    }
-                }
+
+                readResponse(socketChannel);
             }
-
-
-
-
         }
+    }
+
+    private void readResponse(SocketChannel socketChannel) throws IOException {
+        ByteBuffer readBuf = ByteBuffer.allocate(4);
+        while (readBuf.hasRemaining()) {
+            int n = socketChannel.read(readBuf);
+            if (n == -1) {
+                throw new IOException("Unexpected end of stream while waiting for server response");
+            }
+        }
+        readBuf.flip();
+        readBuf.getInt();
     }
 
     @StandardException
     public static class ClientException extends RuntimeException {
-    }
-
-    public static void main(String[] args) throws IOException {
-        Client client = new Client("localhost", 6000);
-        client.sendAll(List.of(new TelemetryMessage(1, 1, 1, 1)));
     }
 }
